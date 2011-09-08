@@ -55,8 +55,7 @@ def run(settings, log=log, bucket='temp-hackpub-test'):
         key = url.split('/')[-1]
         print "fetching metadata for key %s..." % key
         metadata = storage.get_metadata(key)
-        # TODO: Check for 'published-url' and 'created'!
-        if repr(metadata) != "{'foo': 'bar'}":
+        if metadata != {'foo': 'bar', 'published-url': url}:
             raise AssertionError('metadata is %s' % repr(metadata))
         print "  it looks good!"
     finally:

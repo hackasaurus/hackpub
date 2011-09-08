@@ -60,6 +60,7 @@ class S3Storage(object):
                 if name.startswith(S3.METADATA_PREFIX):
                     prop = name[len(S3.METADATA_PREFIX):]
                     metadata[prop] = resp[name]
+            metadata['published-url'] = self._published_url(key)
             return metadata
         return None
 
