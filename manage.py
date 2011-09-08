@@ -14,13 +14,7 @@ try:
 except ImportError:
     import settings
 
-@arg('--port', help='port to serve on', type=int, default=8000)
-@command
-def runserver(args):
-    'run development server'
-
-    from wsgiref.simple_server import make_server
-
+def WSGIHandler():
     from hackpub.app import Application
     from hackpub.s3storage import S3Storage
     
@@ -31,8 +25,15 @@ def runserver(args):
         publish_domain=settings.PUBLISH_DOMAIN
     )
     app = Application(settings=settings, storage=storage)
-    
-    httpd = make_server('', args.port, app)
+
+@arg('--port', help='port to serve on', type=int, default=8000)
+@command
+def runserver(args):
+    'run development server'
+
+    from wsgiref.simple_server import make_server
+
+    httpd = make_server('', args.port, WSGIHandler())
     print 'serving on port %s' % args.port
     httpd.serve_forever()
 
