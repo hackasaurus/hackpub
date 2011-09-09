@@ -25,6 +25,7 @@ def WSGIHandler():
         publish_domain=settings.PUBLISH_DOMAIN
     )
     app = Application(settings=settings, storage=storage)
+    return app
 
 @arg('--port', help='port to serve on', type=int, default=8000)
 @command
