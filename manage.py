@@ -49,7 +49,7 @@ def test(args):
 
     loader = unittest.defaultTestLoader
     suite = test_app.load_tests(loader, unittest.TestSuite(), args.pattern)
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    unittest.TextTestRunner(verbosity=1).run(suite)
 
 @command
 def test_s3storage(args):

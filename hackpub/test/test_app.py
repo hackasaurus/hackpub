@@ -75,6 +75,8 @@ def test_cross_origin_resource_sharing():
 
     res = app.request('/publish', method='OPTIONS')
     equals(res.headers['Access-Control-Allow-Origin'], '*')
+    # A custom header that jQuery ajax requests seem to contain.
+    equals(res.headers['Access-Control-Allow-Headers'], 'x-requested-with')
     equals(res.headers['Access-Control-Allow-Methods'], 'OPTIONS, GET, POST')
 
 # Test setup, collection, and helpers

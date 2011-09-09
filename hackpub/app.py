@@ -28,6 +28,8 @@ class Application(object):
         headers = [
             ('Content-Type', mimetype),
             ('Access-Control-Allow-Origin', self.settings.ALLOW_ORIGINS),
+            # A custom header that jQuery ajax requests seem to contain.
+            ('Access-Control-Allow-Headers', 'x-requested-with'),
             ('Access-Control-Allow-Methods', 'OPTIONS, GET, POST'),
         ]
         return Response(content, headerlist=headers, status=status)
