@@ -1,6 +1,5 @@
 import re
-from datetime import datetime
-from time import mktime
+import time
 from wsgiref.handlers import format_date_time
 
 import simplejson
@@ -10,7 +9,7 @@ from webob import Response
 METADATA_RE = re.compile(r'\/metadata\/([0-9a-zA-Z]+)')
 
 class Application(object):
-    def __init__(self, settings, storage, now=datetime.now):
+    def __init__(self, settings, storage, now=time.time):
         self.settings = settings
         self.storage = storage
         self.now = now
@@ -58,7 +57,7 @@ class Application(object):
                                       status='400 Bad Request')
             html = req.POST['html']
             metadata = {
-                'created': format_date_time(mktime(self.now().timetuple()))
+                'created': format_date_time(self.now())
             }
             if isinstance(html, unicode):
                 html = html.encode('utf-8')

@@ -55,7 +55,7 @@ def test_get_metadata_works():
     equals(res.status, '200 OK')
     equals(res.json['original-url'], 'http://bar.com/')
     equals(res.json['published-url'], 'http://pages.foo.org/beoab')
-    equals(res.json['created'], 'Wed, 07 Sep 2011 22:42:24 GMT')
+    equals(res.json['created'], 'Mon, 19 Sep 2011 16:21:30 GMT')
 
 def test_fetching_published_html_works():
     post_sample_doc()
@@ -82,7 +82,6 @@ def test_cross_origin_resource_sharing():
 # Test setup, collection, and helpers
 
 import unittest
-import datetime
 
 from webtest import TestApp
 from hackpub.app import Application
@@ -130,8 +129,8 @@ def load_tests(loader, tests, pattern):
             self.__dict__.update(kwargs)
 
     def now():
-        return datetime.datetime(2011, 9, 7, 15, 42, 24, 0, None)
-        
+        return 1316449290.594553
+
     def setup():
         global app
         global wsgiapp
