@@ -130,7 +130,7 @@ def load_tests(loader, tests, pattern):
             self.__dict__.update(kwargs)
 
     def now():
-        return datetime.datetime(2011, 9, 7, 15, 42, 24, 468597)
+        return datetime.datetime(2011, 9, 7, 15, 42, 24, 0, None)
         
     def setup():
         global app
