@@ -1,5 +1,5 @@
 # Maximum size of a document to be published.
-MAX_PAYLOAD_SIZE = 100000
+MAX_PAYLOAD_SIZE = 1000000
 
 # Domains that can use our RESTful API. This is delivered as the
 # value of the Access-Control-Allow-Origin header. For more information,
