@@ -41,13 +41,13 @@ class Application(object):
             if req.path == '/robots.txt':
                 return self._response('User-agent: *\r\nDisallow: /\r\n')
             else:
-                match = METADATA_RE.match(req.path)
+                match = METADATA_RE.match(req.path_info)
                 if match:
                     key = match.group(1)
                     metadata = self.storage.get_metadata(key)
                     if metadata is not None:
                         return self._response(metadata)
-        elif req.method == 'POST' and req.path == '/publish':
+        elif req.method == 'POST' and req.path_info == '/publish':
             if not req.content_length:
                 return self._response(status='411 Length Required')
             if req.content_length > self.settings.MAX_PAYLOAD_SIZE:

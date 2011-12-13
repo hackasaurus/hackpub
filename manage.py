@@ -45,10 +45,11 @@ def test(args):
     
     import unittest
 
-    from hackpub.test import test_app
+    from hackpub.test import test_app, test_multiplexer
 
     loader = unittest.defaultTestLoader
     suite = test_app.load_tests(loader, unittest.TestSuite(), args.pattern)
+    suite.addTest(loader.loadTestsFromModule(test_multiplexer))
     unittest.TextTestRunner(verbosity=1).run(suite)
 
 @command

@@ -79,6 +79,19 @@ def test_cross_origin_resource_sharing():
     equals(res.headers['Access-Control-Allow-Headers'], 'x-requested-with')
     equals(res.headers['Access-Control-Allow-Methods'], 'OPTIONS, GET, POST')
 
+def test_multiplexing_integration():
+    from test_multiplexer import Multiplexer, sample_app_1
+    
+    mp = Multiplexer(sample_app_1, 'more', {
+        'foopages': wsgiapp
+    })
+    app = TestApp(mp)
+    app.post('/more/foopages/publish', status=411)
+    res = app.get('/more/foopages/blarg', status=404)
+    equals(res.body, "not found: /more/foopages/blarg")
+    post_sample_doc()
+    res = app.get('/more/foopages/metadata/beoab')
+
 # Test setup, collection, and helpers
 
 import unittest
