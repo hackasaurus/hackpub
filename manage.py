@@ -14,7 +14,7 @@ try:
 except ImportError:
     import settings
 
-def WSGIHandler():
+def BaseWSGIHandler(settings):
     from hackpub.app import Application
     from hackpub.s3storage import S3Storage
     
@@ -26,6 +26,16 @@ def WSGIHandler():
     )
     app = Application(settings=settings, storage=storage)
     return app
+
+def WSGIHandler():
+    from hackpub.multiplexer import Multiplexer
+    
+    primary_app = BaseWSGIHandler(settings)
+    extra_buckets = {}
+    for bucket in settings.EXTRA_BUCKETS:
+        extra_settings = settings.EXTRA_BUCKETS[bucket]
+        extra_buckets[bucket] = BaseWSGIHandler(extra_settings)
+    return Multiplexer(primary_app, 'buckets', extra_buckets)
 
 @arg('--port', help='port to serve on', type=int, default=8000)
 @command

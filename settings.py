@@ -11,3 +11,15 @@ ALLOW_ORIGINS = '*'
 # your bucket, see:
 # http://carltonbale.com/how-to-alias-a-domain-name-or-sub-domain-to-amazon-s3
 PUBLISH_DOMAIN = None
+
+EXTRA_BUCKETS = {}
+
+def subclass_settings(globs, **kwargs):
+    class SettingsSubclass(object):
+        pass
+    
+    subclass = SettingsSubclass()
+    subclass.__dict__.update(globs)
+    subclass.__dict__.update(kwargs)
+
+    return subclass
