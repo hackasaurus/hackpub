@@ -51,7 +51,7 @@ class Application(object):
         elif req.method == 'GET':
             if req.path == '/robots.txt':
                 return self._response('User-agent: *\r\nDisallow: /\r\n')
-            elif req.path == '/ppx-server' and self.settings.ENABLE_PPX:
+            elif req.path_info == '/ppx-server' and self.settings.ENABLE_PPX:
                 return self._response(
                     content=SERVER_HTML % self.settings.ALLOW_ORIGINS,
                     mimetype='text/html'
