@@ -8,13 +8,26 @@ from webob import Response
 
 METADATA_RE = re.compile(r'\/metadata\/([0-9a-zA-Z]+)')
 
+SERVER_HTML = """<!DOCTYPE html>
+<meta charset="utf-8">
+<title>PostMessageProxiedXHR Server Frame</title>
+<script src="http://toolness.github.com/postmessage-proxied-xhr/ppx.min.js"></script>
+<script>
+PPX.startServer({
+  allowOrigin: "%s",
+  allowMethods: ["POST", "GET", "OPTIONS"],
+  allowHeaders: []
+});
+</script>"""
+
 class Application(object):
     def __init__(self, settings, storage, now=time.time):
         self.settings = settings
         self.storage = storage
         self.now = now
 
-    def _response(self, content=None, status='200 OK'):
+    def _response(self, content=None, status='200 OK',
+                  mimetype='text/plain'):
         if content is None:
             content = status
         if isinstance(content, unicode):
@@ -22,8 +35,6 @@ class Application(object):
         if not isinstance(content, str):
             content = simplejson.dumps(content)
             mimetype = 'application/json'
-        else:
-            mimetype = 'text/plain'
         headers = [
             ('Content-Type', mimetype),
             ('Access-Control-Allow-Origin', self.settings.ALLOW_ORIGINS),
@@ -40,6 +51,11 @@ class Application(object):
         elif req.method == 'GET':
             if req.path == '/robots.txt':
                 return self._response('User-agent: *\r\nDisallow: /\r\n')
+            elif req.path == '/ppx-server' and self.settings.ENABLE_PPX:
+                return self._response(
+                    content=SERVER_HTML % self.settings.ALLOW_ORIGINS,
+                    mimetype='text/html'
+                    )
             else:
                 match = METADATA_RE.match(req.path_info)
                 if match:

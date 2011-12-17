@@ -63,6 +63,14 @@ def test_fetching_published_html_works():
     equals(content, u'<p>hello\u2026</p>'.encode('utf-8'))
     equals(content_type, 'text/html; charset=utf-8')
 
+def test_ppx_server():
+    res = app.get('/ppx-server')
+    equals(res.status, '200 OK')
+    if '<!DOCTYPE html>' not in res.body:
+        raise AssertionError('could not find <!DOCTYPE html>')
+    if '"*"' not in res.body:
+        raise AssertionError('could not find allow-origins')
+
 def test_data_is_not_spidered():
     res = app.get('/robots.txt')
     equals(res.status, '200 OK')
@@ -151,7 +159,8 @@ def load_tests(loader, tests, pattern):
         storage = FakeStorage()
         settings = Settings(
             ALLOW_ORIGINS='*',
-            MAX_PAYLOAD_SIZE=5000
+            MAX_PAYLOAD_SIZE=5000,
+            ENABLE_PPX=True
         )
         wsgiapp = Application(settings, storage, now)
         app = TestApp(wsgiapp)
