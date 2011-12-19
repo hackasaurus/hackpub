@@ -68,8 +68,6 @@ def test_ppx_server():
     equals(res.status, '200 OK')
     if '<!DOCTYPE html>' not in res.body:
         raise AssertionError('could not find <!DOCTYPE html>')
-    if '"*"' not in res.body:
-        raise AssertionError('could not find allow-origins')
 
 def test_data_is_not_spidered():
     res = app.get('/robots.txt')

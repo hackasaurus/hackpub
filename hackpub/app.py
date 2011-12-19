@@ -47,7 +47,7 @@ class Application(object):
                 return self._response('User-agent: *\r\nDisallow: /\r\n')
             elif req.path_info == '/ppx-server' and self.settings.ENABLE_PPX:
                 return self._response(
-                    content=SERVER_HTML % self.settings.ALLOW_ORIGINS,
+                    content=SERVER_HTML,
                     mimetype='text/html'
                     )
             else:
