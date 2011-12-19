@@ -10,15 +10,9 @@ METADATA_RE = re.compile(r'\/metadata\/([0-9a-zA-Z]+)')
 
 SERVER_HTML = """<!DOCTYPE html>
 <meta charset="utf-8">
-<title>PostMessageProxiedXHR Server Frame</title>
+<title>PPX Server Frame</title>
 <script src="http://toolness.github.com/postmessage-proxied-xhr/ppx.min.js"></script>
-<script>
-PPX.startServer({
-  allowOrigin: "%s",
-  allowMethods: ["POST", "GET", "OPTIONS"],
-  allowHeaders: []
-});
-</script>"""
+<script>PPX.startServer();</script>"""
 
 class Application(object):
     def __init__(self, settings, storage, now=time.time):

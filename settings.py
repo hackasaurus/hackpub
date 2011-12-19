@@ -16,12 +16,6 @@ PUBLISH_DOMAIN = None
 # that don't support CORS. For more information, see:
 #
 #   https://github.com/toolness/postmessage-proxied-xhr/#readme
-#
-# WARNING: At the time of this writing, the PPX server iframe will
-# grant postMessage-proxied access to the whole server, not just
-# individual paths, which may be a security vulnerability if
-# multiple hackpub instances are multiplexed off the same domain,
-# or if the hackpub instance is part of a bigger web server.
 ENABLE_PPX = False
 
 EXTRA_BUCKETS = {}
