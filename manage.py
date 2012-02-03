@@ -74,23 +74,33 @@ def test_s3storage(args):
     hackpub.test.test_s3storage.run(settings)
 
 @arg('-o', '--output-filename', help='filename to output to',
-     default='extract.json')
+     default='extract.csv')
 @command
 def extract(args):
-    'Export all published work metadata as JSON'
+    'Export all published work metadata as a CSV file'
     
-    import pickle
-    import json
+    import cPickle as pickle
+    import csv
 
+    csvfile = open(args.output_filename, 'wb')
+    writer = csv.DictWriter(csvfile, ('published-url', 'original-url',
+                                      'size', 'created'))
     entries = {}
     cache_filename = settings.BUCKET_NAME + '.cache'
+    writer.writerow({
+        'published-url': 'Published URL',
+        'original-url': 'Original URL',
+        'size': 'Size',
+        'created': 'Date Created'
+        })
     if os.path.exists(cache_filename):
         cache = open(cache_filename, 'rb')
         eof = False
         while not eof:
             try:
                 key, entry = pickle.load(cache)
-                entries[key] = entry
+                writer.writerow(entry)
+                entries[key] = True
             except EOFError:
                 eof = True
         cache.close()
@@ -107,12 +117,10 @@ def extract(args):
                 'size': entry.size
             }
             pickle.dump([entry.key, entries[entry.key]], cache)
+            writer.writerow(entries[entry.key])
             print "added %s" % entry.key
     cache.close()
-
-    outfile = open(args.output_filename, 'w')
-    json.dump(entries, outfile)
-    outfile.close()
+    csvfile.close()
     
     print "wrote %s." % args.output_filename
 
