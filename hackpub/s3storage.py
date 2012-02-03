@@ -77,3 +77,16 @@ class S3Storage(object):
         acl.getElementsByTagName('AccessControlList')[0].appendChild(_pub_read_grant)
         self.conn.put_acl(self.bucket, key, acl.toxml())
         return self._published_url(key)
+
+    def __iter__(self):
+        done = False
+        marker = '0'
+        while not done:
+            list_response = self.conn.list_bucket(
+                self.bucket,
+                options={'marker': marker}
+                )
+            for entry in list_response.entries:
+                yield entry
+            done = not list_response.is_truncated
+            marker = list_response.entries[-1].key
