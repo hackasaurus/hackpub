@@ -62,20 +62,30 @@ class Application(object):
                 return self._response(status='411 Length Required')
             if req.content_length > self.settings.MAX_PAYLOAD_SIZE:
                 return self._response(status='413 Request Entity Too Large')
-            if 'html' not in req.POST or not req.POST['html'].strip():
-                return self._response('Expected HTML.',
+            if 'json' in req.POST:
+                content = req.POST['json']
+                try:
+                    simplejson.loads(content)
+                except ValueError:
+                    return self._response('Malformed JSON.',
+                                          status='400 Bad Request')
+                content_type = 'application/json'
+            elif 'html' in req.POST and req.POST['html'].strip():
+                content = req.POST['html']
+                if isinstance(content, unicode):
+                    content = content.encode('utf-8')
+                content_type = 'text/html; charset=utf-8'
+            else:
+                return self._response('Unrecognized content.',
                                       status='400 Bad Request')
-            html = req.POST['html']
             metadata = {
                 'created': format_date_time(self.now())
             }
-            if isinstance(html, unicode):
-                html = html.encode('utf-8')
             if 'original-url' in req.POST:
                 metadata['original-url'] = req.POST['original-url']
             url = self.storage.create(
-                content=html,
-                mimetype='text/html; charset=utf-8',
+                content=content,
+                mimetype=content_type,
                 metadata=metadata
             )
             return self._response({'published-url': url})

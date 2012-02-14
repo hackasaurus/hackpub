@@ -1,3 +1,5 @@
+import simplejson as json
+
 def test_publishing_massive_content_results_in_error():
     res = app.post('/publish', {
         'html': '<p>' + ('!' * wsgiapp.settings.MAX_PAYLOAD_SIZE) + '</p>',
@@ -8,21 +10,26 @@ def test_publishing_massive_content_results_in_error():
 def test_publishing_malformed_body_results_in_error():
     res = app.post('/publish', 'garbage', status=400)
     equals(res.status, '400 Bad Request')
-    equals(res.body, 'Expected HTML.')
+    equals(res.body, 'Unrecognized content.')
 
 def test_publishing_without_body_results_in_error():
     res = app.post('/publish', status=411)
     equals(res.status, '411 Length Required')
 
+def test_publishing_malformed_json_results_in_error():
+    res = app.post('/publish', {'json': 'lol'}, status=400)
+    equals(res.status, '400 Bad Request')
+    equals(res.body, 'Malformed JSON.')
+
 def test_publishing_without_html_results_in_error():
     res = app.post('/publish', {'hi': 'there'}, status=400)
     equals(res.status, '400 Bad Request')
-    equals(res.body, 'Expected HTML.')
+    equals(res.body, 'Unrecognized content.')
 
 def test_publishing_with_empty_html_results_in_error():
     res = app.post('/publish', {'html': '  '}, status=400)
     equals(res.status, '400 Bad Request')
-    equals(res.body, 'Expected HTML.')
+    equals(res.body, 'Unrecognized content.')
 
 def test_using_unsupported_methods_results_in_error():
     res = app.put('/publish', status=405)
@@ -44,8 +51,23 @@ def post_sample_doc():
     })
     return res
 
+def post_sample_json():
+    content = json.dumps({'hi': u'hello\u2026'})
+    if not isinstance(content, str):
+        raise Exception('Expected JSON dump to be a string')
+    res = app.post('/publish', {
+        'json': content,
+        'original-url': 'http://bar.com/',
+    })
+    return res
+
 def test_publishing_works():
     res = post_sample_doc()
+    equals(res.status, '200 OK')
+    equals(res.json['published-url'], 'http://pages.foo.org/beoab')
+
+def test_publishing_json_works():
+    res = post_sample_json()
     equals(res.status, '200 OK')
     equals(res.json['published-url'], 'http://pages.foo.org/beoab')
 
@@ -62,6 +84,12 @@ def test_fetching_published_html_works():
     content, content_type = wsgiapp.storage.get_content('beoab')
     equals(content, u'<p>hello\u2026</p>'.encode('utf-8'))
     equals(content_type, 'text/html; charset=utf-8')
+
+def test_fetching_published_json_works():
+    post_sample_json()
+    content, content_type = wsgiapp.storage.get_content('beoab')
+    equals(content, json.dumps({'hi': u'hello\u2026'}))
+    equals(content_type, 'application/json')
 
 def test_ppx_server():
     res = app.get('/ppx-server')
