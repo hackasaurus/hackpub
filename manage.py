@@ -12,7 +12,7 @@ from ezcommandline import arg, command, run
 try:
     import settings_local as settings
 except ImportError:
-    import settings
+    import settings_env as settings
 
 def make_storage(settings):
     from hackpub.s3storage import S3Storage
