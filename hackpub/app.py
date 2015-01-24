@@ -50,6 +50,8 @@ class Application(object):
                     content=SERVER_HTML,
                     mimetype='text/html'
                     )
+            elif req.path_info == '/':
+                return self._response()
             else:
                 match = METADATA_RE.match(req.path_info)
                 if match:
