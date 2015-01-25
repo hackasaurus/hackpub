@@ -2,7 +2,8 @@ from xml.dom.minidom import parseString
 
 import S3
 import httplib2
-import random
+
+from .keygen import generate_random_word
 
 _pub_read_grant = parseString("""<Grant>
   <Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -11,14 +12,6 @@ _pub_read_grant = parseString("""<Grant>
   </Grantee>
   <Permission>READ</Permission>
 </Grant>""").documentElement
-
-LETTERS = "abcdefghijklmnopqrstuvwxyz"
-
-def generate_random_word(length):
-    letters = []
-    for i in range(length):
-        letters.append(random.choice(LETTERS))
-    return ''.join(letters)
 
 class S3Storage(object):
     def __init__(self, access_key_id, secret_access_key, bucket,
