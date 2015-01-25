@@ -4,6 +4,10 @@ import sys
 ROOT = os.path.abspath(os.path.dirname(__file__))
 path = lambda *x: os.path.join(ROOT, *x)
 
+# Ideally we'd be using a virtualenv, but this server wasn't written
+# for that, so to forcibly use our version of vendor packages instead
+# of locally-installed ones, we'll insert into sys.path. For more
+# information, see http://stackoverflow.com/a/10097543.
 sys.path.insert(1, path('vendor'))
 sys.path.insert(1, path('.'))
 
