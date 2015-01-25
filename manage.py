@@ -1,11 +1,11 @@
 import os
-import site
+import sys
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
 path = lambda *x: os.path.join(ROOT, *x)
 
-site.addsitedir(path('vendor'))
-site.addsitedir(path('.'))
+sys.path.insert(1, path('vendor'))
+sys.path.insert(1, path('.'))
 
 from ezcommandline import arg, command, run
 
